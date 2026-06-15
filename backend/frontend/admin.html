@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — VV&T</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Painel administrativo</h1>
+    <nav>
+      <span id="usuario-info" class="muted"></span>
+      <a href="#" id="btn-sair">Sair</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section>
+      <div class="row-between">
+        <h2>Notícias</h2>
+        <button id="btn-nova-noticia">+ Nova notícia</button>
+      </div>
+      <div id="lista-noticias" class="grid"></div>
+    </section>
+
+    <section id="aba-usuarios" hidden>
+      <div class="row-between">
+        <h2>Usuários</h2>
+        <button id="btn-novo-usuario">+ Novo usuário</button>
+      </div>
+      <div id="lista-usuarios"></div>
+    </section>
+
+    <dialog id="modal-noticia" class="modal">
+      <form id="form-noticia" method="dialog" enctype="multipart/form-data">
+        <h3 id="modal-noticia-tit">Nova notícia</h3>
+        <label>Título <input type="text" name="titulo" required maxlength="200" /></label>
+        <label>Data <input type="date" name="data_noticia" required /></label>
+        <label>Texto <textarea name="texto" rows="6" required></textarea></label>
+        <label>Imagem <input type="file" name="imagem" accept="image/*" /></label>
+        <div class="row-right">
+          <button type="button" class="btn-sec" value="cancel"
+                  onclick="document.getElementById('modal-noticia').close()">
+            Cancelar
+          </button>
+          <button type="submit">Salvar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="modal-usuario" class="modal">
+      <form id="form-usuario" method="dialog">
+        <h3 id="modal-usuario-tit">Novo usuário</h3>
+        <label>Nome <input type="text" name="nome" required /></label>
+        <label>E-mail <input type="email" name="email" required /></label>
+        <label>Senha <input type="password" name="senha" id="senha-usuario" /></label>
+        <small class="muted">Deixe em branco para não alterar a senha (edição).</small>
+        <label>Tipo
+          <select name="tipo">
+            <option value="comum">Comum</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </label>
+        <div class="row-right">
+          <button type="button" class="btn-sec" value="cancel"
+                  onclick="document.getElementById('modal-usuario').close()">
+            Cancelar
+          </button>
+          <button type="submit">Salvar</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>Noticias.iniciarAdmin();</script>
+</body>
+</html>

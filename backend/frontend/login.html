@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — VV&T</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="login-wrap">
+    <form id="form-login" class="card">
+      <h1>Acesso administrativo</h1>
+      <p class="muted">Use seu e-mail e senha cadastrados.</p>
+
+      <label>E-mail <input type="email" name="email" id="email" required /></label>
+      <label>Senha <input type="password" name="senha" id="senha" required /></label>
+
+      <button type="submit">Entrar</button>
+      <p id="msg" class="msg-err" hidden></p>
+      <p class="muted"><a href="index.html">« Voltar para o portal</a></p>
+    </form>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById('form-login')
+            .addEventListener('submit', Noticias.fazerLogin);
+  </script>
+</body>
+</html>

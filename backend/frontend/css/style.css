@@ -1,0 +1,84 @@
+:root {
+  --pri:#6366f1; --pri-2:#4338ca; --bg:#f8fafc;
+  --card:#fff; --txt:#0f172a; --muted:#64748b;
+  --err:#dc2626; --ok:#16a34a;
+}
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+       background: var(--bg); color: var(--txt); }
+a { color: var(--pri-2); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.container { max-width: 1100px; margin:0 auto; padding:24px; }
+
+.topbar { display:flex; justify-content:space-between; align-items:center;
+          padding:16px 24px; background:var(--card);
+          border-bottom:1px solid #e2e8f0; }
+.topbar h1 { margin:0; font-size:18px; }
+.topbar nav { display:flex; gap:16px; align-items:center; }
+
+.grid { display:grid; gap:16px;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        margin-top:16px; }
+.card-noticia { background:var(--card); border:1px solid #e2e8f0;
+                border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+.card-noticia img { width:100%; height:160px; object-fit:cover; background:#e2e8f0; }
+.card-noticia .corpo { padding:12px 16px; flex:1; display:flex;
+                       flex-direction:column; gap:6px; }
+.card-noticia h3 { margin:0; font-size:16px; }
+.card-noticia .data { color:var(--muted); font-size:12px; }
+.card-noticia .texto { color:#334155; font-size:14px; }
+
+.muted { color:var(--muted); }
+.row-between { display:flex; justify-content:space-between; align-items:center; }
+.row-right   { display:flex; justify-content:flex-end; gap:8px; }
+
+/* Login */
+.login-wrap { display:flex; align-items:center; justify-content:center;
+              min-height:100vh; padding:24px; }
+.login-wrap .card { width:100%; max-width:380px; background:var(--card);
+                     border:1px solid #e2e8f0; border-radius:16px; padding:28px;
+                     box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.login-wrap .card h1 { margin:0 0 4px 0; font-size:20px; }
+
+label { display:block; font-size:13px; margin-top:12px; color:#334155; }
+input, textarea, select { width:100%; margin-top:4px; padding:10px 12px;
+                           border-radius:8px; border:1px solid #cbd5e1;
+                           font-size:14px; background:#fff; font-family:inherit; }
+input:focus, textarea:focus, select:focus { outline:2px solid var(--pri);
+                                             border-color:var(--pri); }
+
+button { margin-top:16px; width:100%; background:var(--pri); color:#fff;
+         border:0; padding:10px 14px; border-radius:8px; font-weight:600;
+         cursor:pointer; font-size:14px; }
+button:hover { background:var(--pri-2); }
+.btn-sec { background:#e2e8f0; color:#0f172a; }
+.btn-sec:hover { background:#cbd5e1; }
+.btn-danger { background:#fee2e2; color:#991b1b; }
+.btn-danger:hover { background:#fecaca; }
+
+.msg-err { color:var(--err); margin-top:10px; font-size:13px; }
+.msg-ok  { color:var(--ok);  margin-top:10px; font-size:13px; }
+
+/* Tabela usuários */
+.tbl { width:100%; border-collapse: collapse; background:#fff; margin-top:16px;
+       border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+.tbl th, .tbl td { text-align:left; padding:10px 14px; font-size:14px;
+                    border-bottom:1px solid #e2e8f0; }
+.tbl th { background:#f1f5f9; font-size:12px; text-transform:uppercase; color:#475569; }
+.badge-ativo { background:#dcfce7; color:#166534; padding:2px 8px;
+               border-radius:999px; font-size:12px; }
+.badge-off   { background:#fee2e2; color:#991b1b; padding:2px 8px;
+               border-radius:999px; font-size:12px; }
+.badge-admin { background:#e0e7ff; color:#3730a3; padding:2px 8px;
+               border-radius:999px; font-size:12px; }
+
+/* Modal */
+.modal { border:0; border-radius:16px; padding:0; max-width:480px; width:92%; }
+.modal::backdrop { background: rgba(15,23,42,0.5); }
+.modal form { padding:24px; display:flex; flex-direction:column; gap:4px; }
+.modal h3 { margin:0 0 4px 0; font-size:18px; }
+.modal button { width:auto; }
+
+/* Botões pequenos */
+.btn-mini { display:inline-block; width:auto; margin:0 4px 0 0;
+            padding:4px 10px; font-size:12px; }
