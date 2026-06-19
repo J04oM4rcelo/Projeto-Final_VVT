@@ -203,6 +203,14 @@ def criar_noticia():
 @login_required
 def atualizar_noticia(nid):
     import models
+    # --- Verifica se o usuário pode editar esta notícia ---
+    noticia = models.buscar_noticia(nid)
+    if not noticia:
+        return jsonify({"erro": "Notícia não encontrada"}), 404
+    # Usuário comum só pode editar suas PRÓPRIAS notícias
+    if session.get("usuario_tipo") != "admin" and noticia["autor_id"] != session["usuario_id"]:
+        return jsonify({"erro": "Você só pode editar notícias que você criou"}), 403
+
     titulo = (request.form.get("titulo") or "").strip()
     data_noticia = request.form.get("data_noticia") or ""
     texto = (request.form.get("texto") or "").strip()
@@ -228,6 +236,14 @@ def atualizar_noticia(nid):
 @login_required
 def desativar_noticia(nid):
     import models
+    # --- Verifica se o usuário pode desativar esta notícia ---
+    noticia = models.buscar_noticia(nid)
+    if not noticia:
+        return jsonify({"erro": "Notícia não encontrada"}), 404
+    # Usuário comum só pode desativar suas PRÓPRIAS notícias
+    if session.get("usuario_tipo") != "admin" and noticia["autor_id"] != session["usuario_id"]:
+        return jsonify({"erro": "Você só pode desativar notícias que você criou"}), 403
+
     models.desativar_noticia(nid)
     return jsonify({"ok": True})
 
