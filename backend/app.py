@@ -160,7 +160,12 @@ def noticias_publicas():
 @login_required
 def listar_noticias_admin():
     import models
-    return jsonify(models.listar_noticias(apenas_ativas=False))
+    if session.get("usuario_tipo") == "admin":
+        # Admin vê TODAS as notícias (ativas e desativadas)
+        return jsonify(models.listar_noticias(apenas_ativas=False))
+    else:
+        # Comum vê: ativas + suas próprias (mesmo desativadas)
+        return jsonify(models.listar_noticias_por_autor(session["usuario_id"]))
 
 
 @app.get("/api/noticias/<int:nid>")
@@ -236,17 +241,27 @@ def atualizar_noticia(nid):
 @login_required
 def desativar_noticia(nid):
     import models
-    # --- Verifica se o usuário pode desativar esta notícia ---
     noticia = models.buscar_noticia(nid)
     if not noticia:
         return jsonify({"erro": "Notícia não encontrada"}), 404
     # Usuário comum só pode desativar suas PRÓPRIAS notícias
     if session.get("usuario_tipo") != "admin" and noticia["autor_id"] != session["usuario_id"]:
         return jsonify({"erro": "Você só pode desativar notícias que você criou"}), 403
-
     models.desativar_noticia(nid)
     return jsonify({"ok": True})
 
+@app.post("/api/noticias/<int:nid>/reativar")
+@login_required
+def reativar_noticia(nid):
+    import models
+    noticia = models.buscar_noticia(nid)
+    if not noticia:
+        return jsonify({"erro": "Notícia não encontrada"}), 404
+    # Usuário comum só pode reativar suas PRÓPRIAS notícias
+    if session.get("usuario_tipo") != "admin" and noticia["autor_id"] != session["usuario_id"]:
+        return jsonify({"erro": "Você só pode reativar notícias que você criou"}), 403
+    models.reativar_noticia(nid)
+    return jsonify({"ok": True})
 
 # ========== UPLOADS ==========
 @app.get("/uploads/<nome>")

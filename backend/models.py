@@ -122,3 +122,26 @@ def desativar_noticia(id_noticia: int):
     cur = get_db()
     cur.execute("UPDATE noticias SET ativo=0 WHERE id=%s", (id_noticia,))
     commit()
+
+def reativar_noticia(id_noticia: int):
+    """Marca a notícia como ativa novamente (ativo=1)."""
+    cur = get_db()
+    cur.execute("UPDATE noticias SET ativo=1 WHERE id=%s", (id_noticia,))
+    commit()
+
+
+def listar_noticias_por_autor(autor_id: int):
+    """Retorna notícias ativas + notícias do próprio autor (mesmo desativadas).
+    Assim o usuário comum vê suas próprias notícias desativadas,
+    mas NÃO vê notícias desativadas de outros.
+    """
+    cur = get_db()
+    cur.execute(
+        "SELECT n.id, n.titulo, n.data_noticia, n.texto, n.imagem, "
+        "       n.ativo, n.autor_id, u.nome AS autor_nome "
+        "FROM noticias n LEFT JOIN usuarios u ON u.id = n.autor_id "
+        "WHERE n.ativo = 1 OR n.autor_id = %s "
+        "ORDER BY n.data_noticia DESC, n.id DESC",
+        (autor_id,),
+    )
+    return cur.fetchall()

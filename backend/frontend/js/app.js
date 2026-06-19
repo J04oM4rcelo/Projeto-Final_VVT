@@ -106,44 +106,65 @@ const Noticias = {
   // ===== NOTÍCIAS =====
   _idNoticiaEditando: null,
 
-  async carregarNoticias() {
-    const { data } = await this.json("/noticias");
-    const lista = document.getElementById("lista-noticias");
-    if (!data || data.length === 0) {
-      lista.innerHTML = '<p class="muted">Nenhuma notícia cadastrada.</p>';
-      return;
-    }
-    lista.innerHTML = data.map(n => {
-      const img = n.imagem
-        ? '<img src="http://localhost:5000/uploads/' + n.imagem + '" alt="">'
-        : '<div style="height:160px;background:#e2e8f0;display:flex;'
-        + 'align-items:center;justify-content:center;color:#94a3b8;">sem imagem</div>';
-      const status = n.ativo
-        ? '<span class="badge-ativo">ativa</span>'
-        : '<span class="badge-off">desativada</span>';
-      const acao = n.ativo
-        ? '<button class="btn-mini btn-danger" data-desativar="' + n.id + '">Desativar</button>'
-        : '<span class="muted" style="font-size:12px;">já desativada</span>';
-      return (
-        '<article class="card-noticia">' + img +
-        '<div class="corpo">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-            '<h3 style="margin:0;font-size:16px;">' + n.titulo + '</h3>' + status +
-          '</div>' +
-          '<div class="data">' + n.data_noticia + '</div>' +
-          '<p class="texto">' + n.texto.slice(0,120) + (n.texto.length>120?"…":"") + '</p>' +
-          '<div style="display:flex;gap:6px;margin-top:8px;">' +
-            '<button class="btn-mini" data-edit="' + n.id + '">Editar</button>' + acao +
-          '</div>' +
-        '</div></article>'
-      );
-    }).join("");
+    async carregarNoticias() {
+        const { data } = await this.json("/noticias");
+        const lista = document.getElementById("lista-noticias");
+      if (!data || data.length === 0) {
+        lista.innerHTML = '<p class="muted">Nenhuma notícia cadastrada.</p>';
+        return;
+      }
 
-    lista.querySelectorAll("[data-edit]").forEach(b =>
-      b.onclick = () => this.abrirModalNoticia(+b.dataset.edit));
-    lista.querySelectorAll("[data-desativar]").forEach(b =>
-      b.onclick = () => this.desativarNoticia(+b.dataset.desativar));
-  },
+        const eu = this.usuarioAtual;
+        const souAdmin = eu && eu.tipo === "admin";
+
+      lista.innerHTML = data.map(n => {
+        const img = n.imagem
+          ? '<img src="/uploads/' + n.imagem + '" alt="">'
+          : '<div style="height:160px;background:#e2e8f0;display:flex;'
+          + 'align-items:center;justify-content:center;color:#94a3b8;">sem imagem</div>';
+
+        const status = n.ativo
+          ? '<span class="badge-ativo">ativa</span>'
+          : '<span class="badge-off">desativada</span>';
+
+        // Verifica se o usuário é o dono desta notícia OU é admin
+        var souDono = eu && n.autor_id === eu.id;
+        var podeEditar = souAdmin || souDono;
+
+        // Monta os botões de ação
+        var acoes = '';
+        if (podeEditar) {
+          acoes += '<button class="btn-mini" data-edit="' + n.id + '">Editar</button>';
+            if (n.ativo) {
+              acoes += '<button class="btn-mini btn-danger" data-desativar="' + n.id + '">Desativar</button>';
+              } else {
+              acoes += '<button class="btn-mini" style="background:#dcfce7;color:#166534;" data-reativar="' + n.id + '">Reativar</button>';
+              }
+          } else {
+          // Não é dono nem admin — sem ações
+          acoes = '<span class="muted" style="font-size:12px;">somente leitura</span>';
+          }
+
+        return (
+          '<article class="card-noticia">' + img +
+          '<div class="corpo">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+              '<h3 style="margin:0;font-size:16px;">' + n.titulo + '</h3>' + status +
+            '</div>' +
+            '<div class="data">' + n.data_noticia + (n.autor_nome ? ' · ' + n.autor_nome : '') + '</div>' +
+            '<p class="texto">' + n.texto.slice(0,120) + (n.texto.length > 120 ? "…" : "") + '</p>' +
+            '<div style="display:flex;gap:6px;margin-top:8px;">' + acoes + '</div>' +
+          '</div></article>'
+        );
+      }).join("");
+
+      lista.querySelectorAll("[data-edit]").forEach(b =>
+        b.onclick = () => this.abrirModalNoticia(+b.dataset.edit));
+      lista.querySelectorAll("[data-desativar]").forEach(b =>
+        b.onclick = () => this.desativarNoticia(+b.dataset.desativar));
+      lista.querySelectorAll("[data-reativar]").forEach(b =>
+        b.onclick = () => this.reativarNoticia(+b.dataset.reativar));
+    },
 
   async abrirModalNoticia(id = null) {
     this._idNoticiaEditando = id;
@@ -182,6 +203,16 @@ const Noticias = {
     if (!confirm(msg)) return;
     await this.json("/noticias/" + id + "/desativar", "POST");
     this.carregarNoticias();
+  },
+
+    async reativarNoticia(id) {
+    if (!confirm("Reativar esta notícia? Ela voltará a aparecer no portal público.")) return;
+    var res = await this.json("/noticias/" + id + "/reativar", "POST");
+    if (res.ok) {
+      this.carregarNoticias();
+    } else {
+      alert(res.data.erro || "Erro ao reativar");
+    }
   },
 
   // ===== USUÁRIOS =====
